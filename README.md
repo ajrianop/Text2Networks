@@ -1,2 +1,12 @@
-# Text2Networks
-In collaboration with Neural Networks and Graph Theory, we will analyze various texts to generate networks, aiming to gain insights into the diverse ideas presented.
+
+
+MVP
+
+Extracción de Relaciones -> Coocurrencia de Palabras
+Grafo de NetworkX
+Pesado y Dirigido
+Los nombres de los nodos son palabras 
+y las relaciones son la 
+
+
+Generación de texto con Grafos de Conocimiento y Caminantes Aleatorios

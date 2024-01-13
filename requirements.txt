@@ -1,0 +1,6 @@
+langchain=0.0.353
+networkx
+nltk
+PyMuPDF=1.23.8
+pydantic
+spacy=3.7.2
