@@ -1,49 +1,22 @@
-import json
-from typing import List, Optional
+from dotenv import load_dotenv
 
-from langchain.utils.openai_functions import convert_pydantic_to_openai_function
 from langchain_community.chat_models import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.pydantic_v1 import BaseModel
 
-template = """A article will be passed to you. Extract from it all papers that are mentioned by this article. 
 
-Do not extract the name of the article itself. 
+load_dotenv()
 
-If no papers are mentioned that's fine - you don't need to extract any! Just return an empty list.
-
-Do not make up or guess ANY extra information. Only extract what exactly is in the text."""  # noqa: E501
+template = """ 
+#TASK: Extract the relationship in a triple way (Sujeto-predicado-objeto) from the following text
+"""  # noqa: E501
 
 prompt = ChatPromptTemplate.from_messages([("system", template), ("human", "{input}")])
 
 
-# Function output schema
-class Paper(BaseModel):
-    """Information about papers mentioned."""
-
-    title: str
-    author: Optional[str]
-
-
-class Info(BaseModel):
-    """Information to extract"""
-
-    papers: List[Paper]
-
-
 # Function definition
 model = ChatOpenAI()
-function = [convert_pydantic_to_openai_function(Info)]
-chain = (
-    prompt
-    | model.bind(functions=function, function_call={"name": "Info"})
-    | (
-        lambda x: json.loads(x.additional_kwargs["function_call"]["arguments"])[
-            "papers"
-        ]
-    )
-)
+chain = prompt | model
 
-if __name__=='__main__':
-    chain.invoke()
-    pass
+if __name__ == '__main__':
+    response = chain.invoke({"input":"In this paper we provide a comprehensive introduction to knowledge graphs, which have recently garnered significant attention from both industry and academia in scenarios that require exploiting diverse, dynamic, large-scale collections of data. After some opening remarks, we motivate and contrast various graph-based data models and query languages that are used for knowledge graphs. We discuss the roles of schema, identity, and context in knowledge graphs. We explain how knowledge can be represented and extracted using a combination of deductive and inductive techniques. We summarise methods for the creation, enrichment, quality assessment, refinement, and publication of knowledge graphs. We provide an overview of prominent open knowledge graphs and enterprise knowledge graphs, their applications, and how they use the aforementioned techniques. We conclude with high-level future research directions for knowledge graphs. "})
+    print(response)
